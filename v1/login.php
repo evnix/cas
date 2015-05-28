@@ -46,7 +46,7 @@
 	//expiry::md5(uid+secret)::uid
 		$resp["error_msg"] = "username or password do not match.";
 		echo json_encode($resp);
-		exit(); //
+		exit(); // //
 
 	}
 
