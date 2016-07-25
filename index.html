@@ -100,18 +100,19 @@ trnsl.1.1.20160729T161957Z.a237cec427a38529.8b040c7c8e0aa9624182664e3e4d5c0ddbd9
             <div class="col-md-6">
 
                 <div class="row" style="background:#eeeeee;height:20px;border-left:1px solid; padding-left:5px">
-                 chatting with: <span id="cwith">None</span> <button onclick='alert("Conversation Queued for Email.")'>Email Conversation</button>
-                 <select>
+                 chatting with: <span id="cwith">None</span> <button onclick='sendMail()'>Email Conversation</button>
+                 <select id="lsrc" onchange="chngs()">
                    <option>en</option>
                    <option>pl</option>
                    <option>hu</option>
+                  
 
                  </select>
 
-                <select>
+                <select id="ldest" onchange="chngd()">
                   <option>pl</option>
                    <option>en</option>
-                   <option>hu</option>
+                   <option>ru</option>
 
                  </select>
                  </div>
@@ -164,7 +165,39 @@ l2="ru"
 
 G=0;
 
+function chngs(){
 
+console.log($('#lsrc').val())
+l1=$('#lsrc').val();
+
+}
+
+function chngd(){
+
+console.log($('#ldest').val())
+l2=$('#ldest').val();
+
+}
+
+
+function sendMail(){
+
+
+var email = prompt("Please enter your email", "avinash.roshan.dsilva@gmail.com");
+
+var msg = msb[to];
+
+
+  $.post("/api/v1/email.php",{email:email,msg:msg},function(data){
+
+      alert("added to queue! msg will be sent soon.");
+
+  });
+
+
+
+
+}
 
 function sendMsg(){
 
