@@ -157,6 +157,7 @@ trnsl.1.1.20160729T161957Z.a237cec427a38529.8b040c7c8e0aa9624182664e3e4d5c0ddbd9
 
 token=""
 from="::?"
+fromname="::?"
 to="::?"
 msb={}
 
@@ -205,7 +206,7 @@ function sendMsg(){
 
   $.post("/api/v1/postMessage",{token:token,from:from,to:to,message:$('#msg').val()},function(data){
 
-     str="<div style=''><b>"+from+": </b>"+$('#msg').val()+"</div>"
+     str="<div style=''><b>"+fromname+": </b>"+$('#msg').val()+"</div>"
 
           if (typeof msb[to] !== 'undefined') {
               // the variable is defined
@@ -230,13 +231,16 @@ function login(){
     if(obj.result=="ok"){
       token=obj.token;
       from = obj.uid;
+
+      fromname = $('#user').val()
       $('#user').val("")
+
       $('#pass').val("")
       $('#login').hide()
       $('#projects').show()
       //$('#subids').show()
 
-      get_projects();
+     
       var myVar = setInterval(myTimer, 1000);
 
 
