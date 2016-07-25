@@ -161,6 +161,8 @@ fromname="::?"
 to="::?"
 msb={}
 
+userlist=[]
+
 l1="en"
 l2="ru"
 
@@ -221,6 +223,24 @@ function sendMsg(){
 
 }
 
+
+function buddyService(){
+
+
+    var datares=""
+    var instr='$list=$_POST["data"];$l=json_decode($list);foreach($l as $v){  print "<div id=$v>$v</div>"; }';
+
+    $.post("/api/buddyservice/",{data:JSON.stringify(userlist),instr:instr},function(data){
+
+     console.log(data);
+     datares=data;
+
+  });
+
+
+
+}
+
 function login(){
 
 
@@ -263,11 +283,13 @@ function getUsers(){
       var str=""
       data=JSON.parse(data)
 
+      userlist=[]
+
       for(i=0;i<data.users.length;i++){
 
 
 
-
+          userlist.push(data["users"][i]["username"]);
           str+="<div onclick='chat(\""+data["users"][i]["id"]+":"+data["users"][i]["username"]+"\")'  class='c1' style='padding:2px'>"+data["users"][i]["username"]+"</div>";
 
       }
@@ -292,6 +314,8 @@ function myTimer() {
     getUsers();
     getMessage();
     updateDisplay();
+
+    buddyService();
 
 }
 
