@@ -10,7 +10,7 @@
 		$t=$words[0];
 		$uid=$words[2];
 
-		if(md5($uid.$secret.$t)==$words[1]){
+		if(md5($uid.$secret.$t)==$words[1] &&  (int)$t>time()){
 
 			return true;
 

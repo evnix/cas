@@ -30,6 +30,16 @@ if(isset($_REQUEST['u'])){
 
 		require "postMessage.php";
 	}
+	else if($r=="/getMessage"){
+
+
+		require "getMessage.php";
+	}
+	else if($r=="/getConversationHistory"){
+
+
+		require "getConversationHistory.php";
+	}
 	else{
 
 		die("Route not found.");
