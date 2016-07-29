@@ -37,6 +37,7 @@
 		$uid= substr( md5(rand()), 0, 7);
 		$token=$time."::".md5($uid.$secret.$time)."::".$uid;
 		$resp["token"] = $token;
+		$resp["uid"] = $res[0]['id'];
 		echo json_encode($resp);
 		exit();
 

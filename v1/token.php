@@ -21,3 +21,25 @@
 
 
 	}
+
+
+
+	function eval_token(){
+
+			if(isset($_POST['token'])){
+
+
+				if(verify_token($_POST['token'])){
+
+				}else{
+
+					die("{result:'error',error_msg:'invalid token'}");
+
+				}
+
+			}else{
+
+				die("{result:'error',error_msg:'invalid token'}");
+			}
+
+	}

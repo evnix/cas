@@ -25,7 +25,15 @@ if(isset($_REQUEST['u'])){
 
 		require "login.php";
 	}
+	else if($r=="/postMessage"){
 
+
+		require "postMessage.php";
+	}
+	else{
+
+		die("Route not found.");
+	}
 
 
 }
