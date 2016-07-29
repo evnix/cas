@@ -40,6 +40,16 @@ if(isset($_REQUEST['u'])){
 
 		require "getConversationHistory.php";
 	}
+	else if($r=="/ping"){
+
+
+		require "ping.php";
+	}
+	else if($r=="/getUsers"){
+
+
+		require "getUsers.php";
+	}
 	else{
 
 		die("Route not found.");

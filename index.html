@@ -24,8 +24,24 @@ body {
 
 }
 
+#c1:hover{
+
+cursor: pointer;
+
+}
+
+.c1:hover{
+
+cursor: pointer;
+background:white;
+
+}
+
    </style>
 
+<!--
+trnsl.1.1.20160729T161957Z.a237cec427a38529.8b040c7c8e0aa9624182664e3e4d5c0ddbd92e96
+-->
 
 
   </head>
@@ -41,7 +57,7 @@ body {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">AutoScaler</a>
+          <a class="navbar-brand" href="#">TransChat</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -60,12 +76,12 @@ body {
             <div class="row" id="login">
             <div class="col-md-6">
                       <div class="form-group ">
-                        <label for="exampleInputEmail1">Username</label>
-                        <input type="text" class="form-control" id="user" placeholder="Email">
+                        <label for="exampleInputEmaidl1">Username</label>
+                        <input type="text" class="form-control" id="user" value="user1" placeholder="Username"  >
                       </div>
                       <div class="form-group">
                         <label for="exampleInputPassword1">Password</label>
-                        <input type="password" class="form-control" id="pass" placeholder="Password">
+                        <input type="password" class="form-control" id="pass" placeholder="Password" value="1234">
                       </div>
                       
                       <button type="submit" class="btn btn-default" onclick="login()">Submit</button>
@@ -75,17 +91,41 @@ body {
 
 
 
-            <div class="row" id="projects" style="display: none">
-            <div class="col-md-6">
-            <button type="submit" class="btn btn-default" onclick="get_projects()">Refresh</button>
-              <button type="submit" class="btn btn-default" onclick="logout()">Logout</button>
-            <br>
-             <table class="table table-bordered"> <thead> <tr> <th>#</th> <th>Project Name</th> </tr> </thead> 
-             <tbody id="tb"> 
+            <div class="row" id="projects" style="display:nonre">
+            <div class="col-md-3"   id="contacts" style="background:#efefef;height:500px">
 
-             </tbody>
-             </table>
+                Loading...
+
             </div>
+            <div class="col-md-6">
+
+                <div class="row" style="background:#eeeeee;height:20px;border-left:1px solid; padding-left:5px">
+                 chatting with: <span id="cwith">None</span> <button onclick='alert("Conversation Queued for Email.")'>Email Conversation</button>
+                 <select>
+                   <option>en</option>
+                   <option>pl</option>
+                   <option>hu</option>
+
+                 </select>
+
+                <select>
+                  <option>pl</option>
+                   <option>en</option>
+                   <option>hu</option>
+
+                 </select>
+                 </div>
+                 <div id="msgs" class="row" style="background:#eeeeee;height:426px;border-left:1px solid; padding-left:5px">
+                 
+                 </div>
+                 <div class="row" style="height:100px">
+                 <textarea id="msg" style="width:88%"></textarea>
+                 <button style="vertical-align: top;height: 65%;" onclick="sendMsg()">Send</button>
+                 </div>
+
+
+            </div>
+
             </div>
 
 
@@ -115,22 +155,57 @@ body {
 <script>
 
 token=""
+from="::?"
+to="::?"
+msb={}
+
+l1="en"
+l2="ru"
+
+G=0;
+
+
+
+function sendMsg(){
+
+
+
+  $.post("/api/v1/postMessage",{token:token,from:from,to:to,message:$('#msg').val()},function(data){
+
+     str="<div style=''><b>"+from+": </b>"+$('#msg').val()+"</div>"
+
+          if (typeof msb[to] !== 'undefined') {
+              // the variable is defined
+              msb[to]+=str;
+          }else{
+
+            msb[to]=str;
+          }
+          $('#msg').val("")
+
+  });
+
+}
+
 function login(){
 
 
   
-  $.post("/login",{u:$('#user').val(),p:$('#pass').val()},function(data){
+  $.post("/api/v1/login",{username:$('#user').val(),password:$('#pass').val()},function(data){
 
     obj=JSON.parse(data)
-    if(obj.res=="ok"){
+    if(obj.result=="ok"){
       token=obj.token;
+      from = obj.uid;
       $('#user').val("")
       $('#pass').val("")
       $('#login').hide()
       $('#projects').show()
-      $('#subids').show()
+      //$('#subids').show()
 
       get_projects();
+      var myVar = setInterval(myTimer, 1000);
+
 
     }else{
 
@@ -143,18 +218,173 @@ function login(){
 }
 
 
+
+function getUsers(){
+
+    $.post("/api/v1/getUsers",{from:from,token:token},function(data){
+
+      var str=""
+      data=JSON.parse(data)
+
+      for(i=0;i<data.users.length;i++){
+
+
+
+
+          str+="<div onclick='chat(\""+data["users"][i]["id"]+":"+data["users"][i]["username"]+"\")'  class='c1' style='padding:2px'>"+data["users"][i]["username"]+"</div>";
+
+      }
+
+
+      $('#contacts').html(str)
+
+
+
+
+  });
+
+
+}
+
+
+function myTimer() {
+  
+    
+
+    ping();
+    getUsers();
+    getMessage();
+    updateDisplay();
+
+}
+
+function chat(word){
+
+
+  ws=word.split(":")
+
+
+  to=ws[0]
+  $('#cwith').html(ws[1])
+
+
+
+}
+
+
+function updateDisplay(){
+
+
+
+  if(to!="::?"){
+
+        if (typeof msb[to] !== 'undefined') {
+            $('#msgs').html(msb[to])
+
+
+      }else{
+
+
+
+      }
+
+
+}
+
+}
+
+
+function addMsg(fid,from,msg){
+
+
+
+    
+  
+
+  $.post("https://translate.yandex.net/api/v1.5/tr.json/translate?key=trnsl.1.1.20160729T161957Z.a237cec427a38529.8b040c7c8e0aa9624182664e3e4d5c0ddbd92e96&lang="+l1+"-"+l2,
+        {text:msg},function(data){
+
+
+          str="<div style=''><b>"+from+": </b>"+data["text"]+"</div>"
+
+          if (typeof msb[fid] !== 'undefined') {
+              // the variable is defined
+              msb[fid]+=str;
+          }else{
+
+            msb[fid]=str;
+          }
+
+          
+
+
+
+  });
+
+
+}
+
+
+function getMessage(){
+
+  if(to!="::?"){
+
+
+
+   
+
+        $.post("/api/v1/getMessage",{token:token,from:to,to:from},function(data){
+
+              data=JSON.parse(data)
+
+
+              
+              for(i=0;i<data.messages.length;i++){
+
+
+                 // console.log(data.messages)
+
+                  G=data.messages
+
+                    addMsg(data.messages[i]["sfrom"],data.messages[i]["sfromname"],data.messages[i]["message"]);
+                  
+
+              }
+
+             
+
+              
+
+
+
+        });
+
+
+
+  }
+
+}
+
+
+function ping(){
+
+
+    $.post("/api/v1/ping",{token:token,from:from},function(data){
+
+
+
+  });
+
+}
+
 function logout(){
 
-  $.post("/logout",{token:token},function(data){
-        obj=JSON.parse(data);
-
-      console.log(obj)
 
 
          location.reload(); 
 
 
-  });
+ 
 
 
 }

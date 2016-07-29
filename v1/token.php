@@ -7,6 +7,12 @@
 		global $secret;
 		$words=explode("::", $token);
 
+
+		if(count($words)<2){
+
+			return false;
+		}
+
 		$t=$words[0];
 		$uid=$words[2];
 
